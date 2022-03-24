@@ -1,20 +1,42 @@
 <template>
   <div id="app">
     <v-header :seller="seller"></v-header>
-    <header-detail :seller="seller"></header-detail>
+    <div class="tab-wrapper">
+      <tab :tabs="tabs"></tab>
+    </div>
   </div>
 </template>
 
 <script>
 import VHeader from "components/v-header/v-header";
-import HeaderDetail from "components/header-detail/header-detail";
+import Tab from "components/tab/tab";
 import { getSeller } from "api";
+import Goods from "components/goods/goods";
+import Seller from "components/seller/seller";
+import Ratings from "components/ratings/ratings";
 
 export default {
   name: "App",
   data() {
     return {
       seller: {},
+      tabs: [
+        {
+          label: "商品",
+          component: Goods,
+          data: this.seller,
+        },
+        {
+          label: "商家",
+          component: Seller,
+          data: this.seller,
+        },
+        {
+          label: "评价",
+          component: Ratings,
+          data: this.seller,
+        },
+      ],
     };
   },
   created() {
@@ -29,9 +51,17 @@ export default {
   },
   components: {
     VHeader,
-    HeaderDetail,
+    Tab,
   },
 };
 </script>
 
-<style lang="stylus"></style>
+<style lang="stylus">
+#app
+  .tab-wrapper
+    position: fixed
+    top: 136px
+    left: 0
+    right: 0
+    bottom: 0
+</style>
