@@ -34,13 +34,34 @@
             <p class="content">{{ seller.bulletin }}</p>
           </div>
         </div>
-        <div class="detail-close">
-          <i class="icon-close"></i>
-        </div>
+      </div>
+      <div class="detail-close">
+        <i class="icon-close"></i>
       </div>
     </div>
   </transition>
 </template>
+
+<script>
+import SupportIco from "components/support-ico/support-ico";
+import Star from "components/star/star";
+
+export default {
+  name: "header-details",
+  props: {
+    seller: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
+  components: {
+    SupportIco,
+    Star,
+  },
+};
+</script>
 
 <style lang="stylus" scoped>
 @import '~common/stylus/mixin';
