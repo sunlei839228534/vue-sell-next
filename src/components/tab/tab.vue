@@ -20,7 +20,11 @@
         ref="slide"
       >
         <cube-slide-item v-for="tab in tabs" :key="tab.label">
-          <components :is="tab.component" :data="tab.data"></components>
+          <components
+            ref="component"
+            :is="tab.component"
+            :data="tab.data"
+          ></components>
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -55,6 +59,8 @@ export default {
   methods: {
     onChange(current) {
       this.index = current;
+      const component = this.$refs.component[current];
+      component.fetch && component.fetch();
     },
     onScroll(pos) {
       const tabBarWidth = this.$refs.tabBar.$el.clientWidth;
@@ -62,6 +68,9 @@ export default {
       const transform = (-pos.x / slideWidth) * tabBarWidth;
       this.$refs.tabBar.setSliderTransform(transform);
     },
+  },
+  mounted() {
+    this.onChange(this.index);
   },
   computed: {
     selectedLabel: {

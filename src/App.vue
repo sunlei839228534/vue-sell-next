@@ -27,13 +27,13 @@ export default {
           data: this.seller,
         },
         {
-          label: "商家",
-          component: Seller,
+          label: "评价",
+          component: Ratings,
           data: this.seller,
         },
         {
-          label: "评价",
-          component: Ratings,
+          label: "商家",
+          component: Seller,
           data: this.seller,
         },
       ],
