@@ -31,17 +31,29 @@
                     ¥{{ food.oldPrice }}
                   </div>
                 </div>
+                <div class="cart-control-wrapper">
+                  <cart-control :food="food"></cart-control>
+                </div>
               </div>
             </li>
           </ul>
         </cube-scroll-nav-panel>
       </cube-scroll-nav>
     </div>
+    <div class="shop-cart-wrapper">
+      <shop-cart
+        :selectFoods="selectFoods"
+        :min-price="seller.minPrice"
+        :delivery-price="seller.deliveryPrice"
+      ></shop-cart>
+    </div>
   </div>
 </template>
 
 <script>
 import { getGoods } from "api";
+import ShopCart from "components/shop-cart/shop-cart";
+import CartControl from "components/cart-control/cart-control";
 
 export default {
   name: "goods",
@@ -66,6 +78,26 @@ export default {
     fetch() {
       getGoods().then((goods) => (this.goods = goods));
     },
+  },
+  computed: {
+    seller() {
+      return this.data;
+    },
+    selectFoods() {
+      let ret = [];
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count > 0) {
+            ret.push(food);
+          }
+        });
+      });
+      return ret;
+    },
+  },
+  components: {
+    ShopCart,
+    CartControl,
   },
 };
 </script>
