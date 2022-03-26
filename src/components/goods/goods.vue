@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control @add="onAdd" :food="food"></cart-control>
                 </div>
               </div>
             </li>
@@ -42,6 +42,7 @@
     </div>
     <div class="shop-cart-wrapper">
       <shop-cart
+        ref="shopCart"
         :selectFoods="selectFoods"
         :min-price="seller.minPrice"
         :delivery-price="seller.deliveryPrice"
@@ -77,6 +78,9 @@ export default {
   methods: {
     fetch() {
       getGoods().then((goods) => (this.goods = goods));
+    },
+    onAdd(el) {
+      this.$refs.shopCart.drop(el);
     },
   },
   computed: {
