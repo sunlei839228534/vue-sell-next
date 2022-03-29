@@ -20,32 +20,43 @@ export default {
   data() {
     return {
       seller: {},
-      tabs: [
-        {
-          label: "商品",
-          component: Goods,
-          data: this.seller,
-        },
-        {
-          label: "评价",
-          component: Ratings,
-          data: this.seller,
-        },
-        {
-          label: "商家",
-          component: Seller,
-          data: this.seller,
-        },
-      ],
     };
   },
   created() {
     this._getSeller();
   },
+  computed: {
+    tabs() {
+      return [
+        {
+          label: "商品",
+          component: Goods,
+          data: {
+            seller: this.seller,
+          },
+        },
+        {
+          label: "评价",
+          component: Ratings,
+          data: {
+            seller: this.seller,
+          },
+        },
+        {
+          label: "商家",
+          component: Seller,
+          data: {
+            seller: this.seller,
+          },
+        },
+      ];
+    },
+  },
   methods: {
     _getSeller() {
       getSeller().then((seller) => {
         this.seller = seller;
+        console.log(this.seller);
       });
     },
   },

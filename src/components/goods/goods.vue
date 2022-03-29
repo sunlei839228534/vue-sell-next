@@ -7,6 +7,28 @@
         :options="scrollOptions"
         v-if="goods.length"
       >
+        <template slot="bar" slot-scope="props">
+          <cube-scroll-nav-bar
+            :labels="props.label"
+            :txts="barTxts"
+            :current="props.current"
+            direction="vertical"
+          >
+            <template slot-scope="props">
+              <div class="text">
+                <support-ico
+                  v-if="props.txt.type >= 1"
+                  :size="3"
+                  :type="props.txt.type"
+                ></support-ico>
+                <span>{{ props.txt.name }}</span>
+                <div class="num" v-if="props.txt.count">
+                  <bubble :num="props.txt.count"></bubble>
+                </div>
+              </div>
+            </template>
+          </cube-scroll-nav-bar>
+        </template>
         <cube-scroll-nav-panel
           v-for="good in goods"
           :key="good.name"
@@ -55,6 +77,8 @@
 import { getGoods } from "api";
 import ShopCart from "components/shop-cart/shop-cart";
 import CartControl from "components/cart-control/cart-control";
+import SupportIco from "components/support-ico/support-ico";
+import Bubble from "components/bubble/bubble";
 
 export default {
   name: "goods",
@@ -85,7 +109,7 @@ export default {
   },
   computed: {
     seller() {
-      return this.data;
+      return this.data.seller;
     },
     selectFoods() {
       let ret = [];
@@ -98,10 +122,28 @@ export default {
       });
       return ret;
     },
+    barTxts() {
+      let ret = [];
+      this.goods.forEach((good) => {
+        const { type, name, foods } = good;
+        let count = 0;
+        foods.forEach((food) => {
+          count += food.count || 0;
+        });
+        ret.push({
+          type,
+          name,
+          count,
+        });
+      });
+      return ret;
+    },
   },
   components: {
     ShopCart,
     CartControl,
+    SupportIco,
+    Bubble,
   },
 };
 </script>

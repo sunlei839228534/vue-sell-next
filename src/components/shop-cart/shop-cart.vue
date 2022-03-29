@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="shopcart">
-      <div class="content">
+      <div class="content" @click="toggleList">
         <div class="content-left">
           <div class="logo-wrapper">
             <div class="logo" :class="{ highlight: totalCount > 0 }">
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       balls: createBalls(),
+      listFold: this.fold,
     };
   },
   props: {
@@ -80,6 +81,14 @@ export default {
     minPrice: {
       type: Number,
       default: 0,
+    },
+    fold: {
+      type: Boolean,
+      default: true,
+    },
+    sticky: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -155,6 +164,52 @@ export default {
         ball.show = false;
         el.style.display = "none";
       }
+    },
+    toggleList() {
+      if (this.listFold) {
+        if (!this.totalCount) {
+          return;
+        }
+        this.listFold = false;
+        this._showShopCartList();
+        this._showShopCartSticky();
+      } else {
+        this.listFold = true;
+        this._hideShopCartList();
+      }
+    },
+    _showShopCartList() {
+      this.shopCartListComp =
+        this.shopCartListComp ||
+        this.$createShopCartList({
+          $props: {
+            selectFoods: "selectFoods",
+          },
+          $events: {
+            hide: () => {
+              this.listFold = true;
+            },
+          },
+        });
+      this.shopCartListComp.show();
+    },
+    _hideShopCartList() {
+      this.$parent.list.hide();
+      this.shopCartListComp.hide();
+    },
+    _showShopCartSticky() {
+      this.shopCartStickyComp =
+        this.showCartStickyComp ||
+        this.$createShopCartSticky({
+          $props: {
+            selectFoods: "selectFoods",
+            deliveryPrice: "deliveryPrice",
+            minPrice: "minPrice",
+            fold: "listFold",
+            list: this.shopCartListComp,
+          },
+        });
+      this.shopCartStickyComp.show();
     },
   },
 };

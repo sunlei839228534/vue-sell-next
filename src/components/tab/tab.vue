@@ -20,11 +20,11 @@
         ref="slide"
       >
         <cube-slide-item v-for="tab in tabs" :key="tab.label">
-          <components
+          <component
             ref="component"
             :is="tab.component"
             :data="tab.data"
-          ></components>
+          ></component>
         </cube-slide-item>
       </cube-slide>
     </div>
