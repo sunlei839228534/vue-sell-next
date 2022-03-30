@@ -50,9 +50,6 @@ export default {
         return {};
       },
     },
-    sticky: {
-      type: Boolean,
-    },
   },
   methods: {
     show() {

@@ -189,17 +189,20 @@ export default {
             hide: () => {
               this.listFold = true;
             },
+            leave: () => {
+              this._hideSHopCartSticky();
+            },
           },
         });
       this.shopCartListComp.show();
     },
     _hideShopCartList() {
-      this.$parent.list.hide();
-      this.shopCartListComp.hide();
+      const comp = this.sticky ? this.$parent.list : this.shopCartStickyComp;
+      comp.hide && comp.hide();
     },
     _showShopCartSticky() {
       this.shopCartStickyComp =
-        this.showCartStickyComp ||
+        this.shopCartStickyComp ||
         this.$createShopCartSticky({
           $props: {
             selectFoods: "selectFoods",
@@ -210,6 +213,14 @@ export default {
           },
         });
       this.shopCartStickyComp.show();
+    },
+    _hideSHopCartSticky() {
+      this.shopCartStickyComp.hide();
+    },
+  },
+  watch: {
+    fold(newVal) {
+      this.listFold = newVal;
     },
   },
 };

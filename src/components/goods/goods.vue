@@ -9,7 +9,7 @@
       >
         <template slot="bar" slot-scope="props">
           <cube-scroll-nav-bar
-            :labels="props.label"
+            :labels="props.labels"
             :txts="barTxts"
             :current="props.current"
             direction="vertical"
