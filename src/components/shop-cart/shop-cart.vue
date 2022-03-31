@@ -20,7 +20,9 @@
           <div class="desc">另需配送费¥{{ deliveryPrice }}元</div>
         </div>
         <div class="content-right">
-          <div class="pay" :class="payClass">{{ payDesc }}</div>
+          <div @click="pay" class="pay" :class="payClass">
+            {{ payDesc }}
+          </div>
         </div>
       </div>
       <div class="ball-container">
@@ -178,6 +180,15 @@ export default {
         this._hideShopCartList();
       }
     },
+    pay(e) {
+      if (this.totalPrice < this.minPrice) return;
+      this.dialogComp = this.$createDialog({
+        title: "支付",
+        content: `支付${this.totalPrice}元`,
+      });
+      this.dialogComp.show();
+      e.stopPropagation();
+    },
     _showShopCartList() {
       this.shopCartListComp =
         this.shopCartListComp ||
@@ -191,6 +202,9 @@ export default {
             },
             leave: () => {
               this._hideSHopCartSticky();
+            },
+            add: (el) => {
+              this.shopCartStickyComp.drop(el);
             },
           },
         });
@@ -221,6 +235,11 @@ export default {
   watch: {
     fold(newVal) {
       this.listFold = newVal;
+    },
+    totalCount(newVal) {
+      if (!this.listFold && !newVal) {
+        this._hideShopCartList();
+      }
     },
   },
 };
