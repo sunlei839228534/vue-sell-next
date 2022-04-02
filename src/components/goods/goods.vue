@@ -36,7 +36,12 @@
           :title="good.name"
         >
           <ul>
-            <li v-for="food in good.foods" :key="food.name" class="food-item">
+            <li
+              @click="selectFood(food)"
+              v-for="food in good.foods"
+              :key="food.name"
+              class="food-item"
+            >
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="" />
               </div>
@@ -97,9 +102,15 @@ export default {
         click: false,
         directionLockThreshold: 0,
       },
+      selectedFood: {},
     };
   },
   methods: {
+    selectFood(food) {
+      this.selectedFood = food;
+      this._showFood();
+      this._showShopCartSticky();
+    },
     fetch() {
       if (!this.fetched) {
         this.fetched = true;
@@ -108,6 +119,40 @@ export default {
     },
     onAdd(el) {
       this.$refs.shopCart.drop(el);
+    },
+    _showFood() {
+      this.foodComp =
+        this.foodComp ||
+        this.$createFood({
+          $props: {
+            food: "selectedFood",
+          },
+          $events: {
+            leave: () => {
+              this._hideShopCartList();
+            },
+            add: (el) => {
+              this.shopCartStickyComp.drop(el);
+            },
+          },
+        });
+      this.foodComp.show();
+    },
+    _showShopCartSticky() {
+      this.shopCartStickyComp =
+        this.shopCartStickyComp ||
+        this.$createShopCartSticky({
+          $props: {
+            selectFoods: "selectFoods",
+            deliveryPrice: this.seller.deliveryPrice,
+            minPrice: this.seller.minPrice,
+            fold: true,
+          },
+        });
+      this.shopCartStickyComp.show();
+    },
+    _hideShopCartList() {
+      this.shopCartStickyComp.hide();
     },
   },
   computed: {
