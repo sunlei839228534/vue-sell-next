@@ -25,7 +25,7 @@
               <cart-control @add="addFood" :food="food"></cart-control>
             </div>
             <transition name="fade">
-              <div @click.stop="addFirst" class="buy" v-show="!food.count">
+              <div @click="addFirst" class="buy" v-show="!food.count">
                 加入购物车
               </div>
             </transition>
@@ -36,6 +36,47 @@
             <p class="text">{{ food.info }}</p>
           </div>
           <split></split>
+          <div class="rating">
+            <h1 class="title">商品评价</h1>
+            <rating-select
+              @select="onSelectType"
+              @toggle="onToggle"
+              :ratings="ratings"
+              :only-content="onlyContent"
+              :select-type="selectType"
+              :desc="desc"
+            ></rating-select>
+            <div class="rating-wrapper">
+              <ul v-show="ratings && ratings.length">
+                <li
+                  v-for="(rating, index) in computedRatings"
+                  class="rating-item border-bottom-1px"
+                  :key="index"
+                >
+                  <div class="user">
+                    <span class="name">{{ rating.username }}</span>
+                    <img
+                      class="avatar"
+                      width="12"
+                      height="12"
+                      :src="rating.avatar"
+                      alt=""
+                    />
+                  </div>
+                  <div class="time">{{ format(rating.rateTime) }}</div>
+                  <p class="text">
+                    <span
+                      :class="{
+                        'icon-thumb_up': rating.rateType === 0,
+                        'icon-thumb-down': rating.rateType === 1,
+                      }"
+                    ></span>
+                    {{ rating.text }}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </cube-scroll>
     </div>
@@ -46,10 +87,14 @@
 import popupMixin from "common/mixins/popup";
 import Split from "components/split/split";
 import CartControl from "components/cart-control/cart-control";
+import moment from "moment";
+import RatingSelect from "components/rating-select/rating-select";
 
 const EVENT_SHOW = "show";
 const EVENT_LEAVE = "leave";
 const EVENT_ADD = "add";
+
+const ALL = 2;
 
 export default {
   name: "food",
@@ -58,6 +103,17 @@ export default {
     food: {
       type: Object,
     },
+  },
+  data() {
+    return {
+      onlyContent: true,
+      selectType: ALL,
+      desc: {
+        all: "全部",
+        positive: "推荐",
+        negative: "吐槽",
+      },
+    };
   },
   methods: {
     afterLeave() {
@@ -70,6 +126,15 @@ export default {
     addFood(target) {
       this.$emit(EVENT_ADD, target);
     },
+    format(time) {
+      return moment(time).format("YYYY-MM-DD hh:mm:ss");
+    },
+    onSelectType(type) {
+      this.selectType = type;
+    },
+    onToggle() {
+      this.onlyContent = !this.onlyContent;
+    },
   },
   created() {
     this.$on(EVENT_SHOW, () => {
@@ -78,9 +143,27 @@ export default {
       });
     });
   },
+  computed: {
+    ratings() {
+      return this.food.ratings;
+    },
+    computedRatings() {
+      let ret = [];
+      this.ratings.forEach((rating) => {
+        if (this.onlyContent && !rating.text) {
+          return;
+        }
+        if (this.selectType === ALL || this.selectType === rating.rateType) {
+          ret.push(rating);
+        }
+      });
+      return ret;
+    },
+  },
   components: {
     Split,
     CartControl,
+    RatingSelect,
   },
 };
 </script>
